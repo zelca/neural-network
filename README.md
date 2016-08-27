@@ -11,12 +11,12 @@ The network and neurons are implemented in pretty straightforward (and non-optim
 
 - The [Feed-forward](https://en.wikipedia.org/wiki/Feedforward_neural_network) algorithm to predict labels
 - Simple [perception](https://en.wikipedia.org/wiki/Perceptron) with step activation function
+- A sample network to solve [XOR](https://www.google.nl/?ion=1&espv=2#q=xor%20neural%20network) based on perceptions
 
 ### TODO
 
 This list is not final and will be extended.
 
-- A sample network to solve [XOR](https://www.google.nl/?ion=1&espv=2#q=xor%20neural%20network) based on perceptions
 - Additional activation functions like [Identity](https://en.wikipedia.org/wiki/Identity_function) and [Sigmoid](https://en.wikipedia.org/wiki/Sigmoid_function)
 - The [Back-propagation](https://en.wikipedia.org/wiki/Backpropagation) algorithm to train network
 - [Stochastic gradient descent algorithm](https://en.wikipedia.org/wiki/Stochastic_gradient_descent)
