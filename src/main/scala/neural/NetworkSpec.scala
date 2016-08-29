@@ -1,25 +1,22 @@
 package neural
 
-import neural.NetworkSpec.{LayersSpec, LearningRateSpec, LossSpec}
+import neural.NetworkSpec.{LayersSpec, LearningRateSpec, LossFunctionSpec}
 import neural.function.LearningRate.LearningRate
 import neural.function._
 
 class NetworkSpec(val layers: LayersSpec,
                   val activation: Activation,
                   val linearOutput: Boolean,
-                  val lossFunction: LossSpec,
+                  val lossFunction: LossFunctionSpec,
                   val learningRate: LearningRateSpec) {
 
-  assert(!(activation == Linear && linearOutput),
+  assert(activation != Linear || !linearOutput,
     "Activation function is already linear")
 
-  assert(!(activation == UnitStep && learningRate.isDefined),
+  assert(activation != UnitStep || learningRate.isEmpty,
     "Unit step function can not be used for learning")
 
-  assert(lossFunction.isDefined == learningRate.isDefined,
-    "Both loss function and learning rate must be defined/undefined")
-
-  assert(!(lossFunction.contains(CrossEntropy) && (activation != Sigmoid || linearOutput)),
+  assert(!(lossFunction.contains(Entropy) && (activation != Sigmoid || linearOutput)),
     "Cross entropy is only used with Sigmoid activation for all layers")
 
   layers match {
@@ -33,9 +30,9 @@ class NetworkSpec(val layers: LayersSpec,
 
 object NetworkSpec {
 
-  type LossSpec = Option[LossFunction]
-
   type LearningRateSpec = Option[LearningRate]
+
+  type LossFunctionSpec = Option[LossFunction]
 
   type LayersSpec = Either[List[Int], List[List[(Double, Array[Double])]]]
 
@@ -48,11 +45,11 @@ object NetworkSpec {
   }
 
   def apply(layers: LayersSpec,
-            learningRate: LearningRate,
+            learningRate: LearningRateSpec,
             activation: Activation = Sigmoid,
             linearOutput: Boolean = false,
-            lossFunction: LossFunction = CrossEntropy): NetworkSpec = {
-    new NetworkSpec(layers, activation, linearOutput, Some(lossFunction), Some(learningRate))
+            lossFunction: LossFunctionSpec = Some(Entropy)): NetworkSpec = {
+    new NetworkSpec(layers, activation, linearOutput, lossFunction, learningRate)
   }
 
 }

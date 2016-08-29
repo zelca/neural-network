@@ -27,7 +27,7 @@ object Quadratic extends LossFunction {
 
 }
 
-object CrossEntropy extends LossFunction {
+object Entropy extends LossFunction {
 
   val LowerLimit = 1.0e-80
 

@@ -26,7 +26,7 @@ package object neural {
         network.backPropagation(delta)
         network.update()
         if ((index + 1) % 1000 == 0 || index == batch - 1)
-          logger.debug("%s of %s processed".format(index + 1, data.size))
+          logger.debug("%s of %s processed".format(index + 1, batch))
     }
   }
 

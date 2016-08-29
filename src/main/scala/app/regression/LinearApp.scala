@@ -20,6 +20,7 @@ object LinearApp extends App {
   val generated = x1.map(linear(_) + Random.nextGaussian())
 
   val network = Network(NetworkSpec.linear(Left(List(1, 1)), LR))
+  // val network = Network(NetworkSpec(Left(List(1, 1)), LR, Sigmoid, linearOutput = true, Quadratic))
 
   val trainingData = (x1, generated).zipped.map((xi, yi) => (Array(yi), Array(xi)))
   (0 until 10) foreach {
