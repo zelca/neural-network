@@ -18,7 +18,7 @@ object Step extends Activation {
 
 }
 
-object Identity extends Activation {
+object Linear extends Activation {
 
   def apply(z: Double): Double = {
     z
@@ -30,10 +30,31 @@ object Identity extends Activation {
 
 }
 
-object Sigmoid extends Activation {
+object ReLU extends Activation {
 
   def apply(z: Double): Double = {
-    1.0 / (1.0 + math.exp(-1 * z))
+    z.max(0.0)
+  }
+
+  def gradient(z: Double): Double = {
+    if (z > 0.0) 1.0 else 0.0
+  }
+
+}
+
+object Sigmoid extends Activation {
+
+  val MaxLimit = 100
+
+  val MinLimit = -100
+
+  def apply(z: Double): Double = {
+    if (z < MinLimit)
+      0.0
+    else if (z > MaxLimit)
+      1.0
+    else
+      1.0 / (1.0 + math.exp(-1 * z))
   }
 
   def gradient(z: Double): Double = {
