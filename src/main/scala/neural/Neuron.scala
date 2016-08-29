@@ -19,7 +19,7 @@ class Neuron(activation: Activation, var b: Double, var w: Array[Double]) {
     * @return activation value = sum(weight[i] * input[i]) + bias
     */
   def forward(input: Array[Double]): Double = {
-    assert(w.size == input.length)
+    assert(w.size == input.length, "Weights count must be equal to inputs count")
     x = input
     z = (w, x).zipped.map(_ * _).sum + b
     a = activation(z)

@@ -1,9 +1,9 @@
 package neural
 
 import neural.Network.Layer
-import neural.function.Activation
+import neural.function.{Activation, Linear}
 
-class Network(layers: Array[Layer]) {
+class Network(val spec: NetworkSpec, layers: Array[Layer]) {
 
   /**
     * @param input - features of the training/testing sample
@@ -30,10 +30,10 @@ class Network(layers: Array[Layer]) {
 
   /**
     * Updates biases and weights for all neurons in all layers
-    *
-    * @param alpha - learning rate
     */
-  def update(alpha: Double): Unit = {
+  def update(): Unit = {
+    assert(spec.learningRate.isDefined, "Learning rate is not defined")
+    val alpha = spec.learningRate.get()
     layers.par.foreach(_.par.foreach(_.update(alpha)))
   }
 
@@ -44,33 +44,26 @@ object Network {
   type Layer = Array[Neuron]
 
   /**
-    * @param layout     - number of neurons for each layer
-    * @param activation - activation function for all neurons
-    * @return a network where neurons initialized with random (Gaussian) biases and weights
+    * @param spec - a valid network specification
+    * @return a network in accordance with specification
     */
-  def apply(layout: List[Int], activation: Activation): Network = {
-    assert(layout.size >= 2)
-    val layers = layout.sliding(2).collect {
-      case prev :: curr :: Nil => Array.fill(curr)(Neuron(activation, prev))
-    }
-    new Network(layers.toArray)
-  }
+  def apply(spec: NetworkSpec): Network = {
+    def getActivation(last: Boolean): Activation =
+      if (last && spec.linearOutput) Linear else spec.activation
 
-  /**
-    *
-    * @param biases     - biases for each neuron in each layer
-    * @param weights    - weights for each neuron in each layer
-    * @param activation - activation function for all neurons
-    * @return a network where neurons initialized with the given biases and weights
-    */
-  def apply(biases: List[List[Double]], weights: List[List[Array[Double]]], activation: Activation): Network = {
-    assert(biases.size == weights.size)
-    val layers = (biases, weights).zipped.map {
-      (bl, wl) =>
-        assert(bl.size == wl.size)
-        (bl, wl).zipped.map((bn, wn) => Neuron(activation, bn, wn)).toArray
+    val layers = spec.layers match {
+      case Left(sizes) =>
+        for (i <- 1 until sizes.size; prev = sizes(i - 1); curr = sizes(i); last = i == sizes.size - 1) yield {
+          Array.fill(curr)(Neuron(getActivation(last), prev))
+        }
+      case Right(values) =>
+        for (i <- values.indices; layer = values(i); last = i == values.size - 1) yield {
+          layer.toArray.map {
+            case (bias, weights) => Neuron(getActivation(last), bias, weights)
+          }
+        }
     }
-    new Network(layers.toArray)
+    new Network(spec, layers.toArray)
   }
 
 }

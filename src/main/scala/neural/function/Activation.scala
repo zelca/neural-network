@@ -6,7 +6,7 @@ trait Activation extends (Double => Double) {
 
 }
 
-object Step extends Activation {
+object UnitStep extends Activation {
 
   def apply(z: Double): Double = {
     if (z > 0.0) 1.0 else 0.0
@@ -44,14 +44,14 @@ object ReLU extends Activation {
 
 object Sigmoid extends Activation {
 
-  val MaxLimit = 100
+  val UpperLimit = 100
 
-  val MinLimit = -100
+  val LowerLimit = -100
 
   def apply(z: Double): Double = {
-    if (z < MinLimit)
+    if (z < LowerLimit)
       0.0
-    else if (z > MaxLimit)
+    else if (z > UpperLimit)
       1.0
     else
       1.0 / (1.0 + math.exp(-1 * z))
