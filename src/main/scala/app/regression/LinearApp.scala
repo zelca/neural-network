@@ -12,7 +12,6 @@ object LinearApp extends App {
 
   val logger = Logger(LoggerFactory.getLogger("linear-app"))
 
-  val LF = Quadratic
   val LR = LearningRate.constant(0.01)
 
   val x1 = -5.0 until 5.0 by 0.1
@@ -23,10 +22,9 @@ object LinearApp extends App {
   // val network = Network(NetworkSpec(Left(List(1, 1)), LR, Sigmoid, linearOutput = true, Quadratic))
 
   val trainingData = (x1, generated).zipped.map((xi, yi) => (Array(yi), Array(xi)))
-  (0 until 10) foreach {
-    i =>
-      SGD(network, trainingData, 50)
-      logger.info("[%s]: loss: %f".format(i, evaluate(network, trainingData, LF)))
+  for (epoch <- 0 until 20) {
+      SGD(network, 10, trainingData)
+      logger.info("[%s]: loss: %f".format(epoch, evaluate(network, trainingData)))
   }
 
   val x2 = -5.0 until 5.0 by 0.83

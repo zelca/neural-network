@@ -21,20 +21,13 @@ class Network(val spec: NetworkSpec, layers: Array[Layer]) {
     * @param delta - delta, calculated by loss function
     */
   def backPropagation(delta: Array[Double]): Unit = {
+    assert(spec.learningRate.isDefined, "Learning rate is not defined")
+    val alpha = spec.learningRate.get()
     layers.reverse.foldLeft(delta) {
       (delta, layer) =>
         assert(layer.length == delta.length)
-        (layer, delta).zipped.map(_.backward(_)).transpose.map(_.sum)
+        (layer, delta).zipped.map(_.backward(_, alpha)).transpose.map(_.sum)
     }
-  }
-
-  /**
-    * Updates biases and weights for all neurons in all layers
-    */
-  def update(): Unit = {
-    assert(spec.learningRate.isDefined, "Learning rate is not defined")
-    val alpha = spec.learningRate.get()
-    layers.par.foreach(_.par.foreach(_.update(alpha)))
   }
 
 }

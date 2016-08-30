@@ -12,8 +12,6 @@ class Neuron(activation: Activation, var b: Double, var w: Array[Double]) {
 
   var a = 0.0 // last activation value
 
-  var d = 0.0 // last delta value
-
   /**
     * @param input - output of the preceding layer
     * @return activation value = sum(weight[i] * input[i]) + bias
@@ -27,24 +25,21 @@ class Neuron(activation: Activation, var b: Double, var w: Array[Double]) {
   }
 
   /**
+    * Updates:
+    * bias = bias - alpha * delta * activation'(z)
+    * weight[i] = weight[i] - alpha * delta * activation'(z) * activation(value)
+    *
     * @param delta - delta, calculated based on subsequent layer
+    * @param alpha - learning rate
     * @return a list of deltas for every input = weight * delta * activation'(value)
     */
-  def backward(delta: Double): Array[Double] = {
-    d = delta * activation.gradient(z)
-    w.map(_ * d)
-  }
-
-  /**
-    * Updates:
-    * bias = bias - alpha * delta
-    * weight[i] = weight[i] - alpha * delta * activation(value)
-    *
-    * @param alpha - learning rate
-    */
-  def update(alpha: Double): Unit = {
+  def backward(delta: Double, alpha: Double): Array[Double] = {
+    assert(w.size == x.length, "Feed forward mus be ran first")
+    val d = delta * activation.gradient(z)
+    val v = w.map(_ * d)
     b = b - alpha * d
     w = (w, x).zipped.map(_ - alpha * d * _)
+    v
   }
 
 }
