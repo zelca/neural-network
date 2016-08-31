@@ -31,4 +31,6 @@ package object nnet {
     data.map(i => (network.feedForward(i._2), i._1)).map(p => lossFunction(p._1, p._2)).sum / data.size
   }
 
+  implicit def anyToOptionAny[A](a: A): Option[A] = Some(a)
+
 }

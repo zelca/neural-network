@@ -1,6 +1,6 @@
 # Neural Network
 
-Neural network implementation written in plain Scala. No third-party libraries are used.
+Neural network implementation written in plain Scala. No third-party ML libraries are used.
 
 It is supposed to be used only for educational purposes so no performance optimization is done.  
 The network and neurons are implemented in pretty straightforward (and non-optimal) way.
