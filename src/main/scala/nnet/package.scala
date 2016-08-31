@@ -4,7 +4,7 @@ import org.slf4j.LoggerFactory
 
 import scala.util.Random
 
-package object neural {
+package object nnet {
 
   val logger = Logger(LoggerFactory.getLogger("neural"))
 

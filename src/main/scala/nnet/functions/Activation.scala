@@ -1,4 +1,4 @@
-package neural.function
+package nnet.functions
 
 trait Activation extends (Double => Double) {
 

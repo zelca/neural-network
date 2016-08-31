@@ -1,8 +1,8 @@
-package neural
+package nnet
 
-import neural.NetworkSpec.{LayersSpec, LearningRateSpec, LossFunctionSpec}
-import neural.function.LearningRate.LearningRate
-import neural.function._
+import nnet.NetworkSpec.{LayersSpec, LearningRateSpec, LossFunctionSpec}
+import nnet.functions.LearningRate.LearningRate
+import nnet.functions._
 
 class NetworkSpec(val layers: LayersSpec,
                   val activation: Activation,

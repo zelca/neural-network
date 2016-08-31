@@ -1,14 +1,15 @@
-package app.regression
+package nnet.examples.regression
 
 import com.typesafe.scalalogging.Logger
-import neural._
-import neural.function._
+import nnet._
+import nnet.{Network, NetworkSpec}
+import nnet.functions._
 import org.sameersingh.scalaplot.Implicits._
 import org.slf4j.LoggerFactory
 
 import scala.util.Random
 
-object LinearApp extends App {
+object Linear extends App {
 
   val logger = Logger(LoggerFactory.getLogger("linear-app"))
 

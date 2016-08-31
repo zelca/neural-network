@@ -1,4 +1,4 @@
-package neural.function
+package nnet.functions
 
 object LearningRate {
 

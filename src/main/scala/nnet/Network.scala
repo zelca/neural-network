@@ -1,7 +1,7 @@
-package neural
+package nnet
 
-import neural.Network.Layer
-import neural.function.{Activation, Linear}
+import nnet.Network.Layer
+import nnet.functions.{Activation, Linear}
 
 class Network(val spec: NetworkSpec, layers: Array[Layer]) {
 

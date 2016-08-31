@@ -1,11 +1,11 @@
-package app
+package nnet.examples
 
-import neural.{Network, NetworkSpec}
+import nnet.{Network, NetworkSpec}
 
 /**
   * A sample network built on perceptrons to solve XOR function
   */
-object XORApp extends App {
+object XOR extends App {
 
   val layers = List(
     List((-0.5, Array(1.0, 1.0)), (1.5, Array(-1.0, -1.0))),

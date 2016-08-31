@@ -1,6 +1,6 @@
-package neural.function
+package nnet.functions
 
-import neural.Label
+import nnet.Label
 
 trait LossFunction extends ((Label, Label) => Double) {
 

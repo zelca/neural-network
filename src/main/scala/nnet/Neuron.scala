@@ -1,6 +1,6 @@
-package neural
+package nnet
 
-import neural.function.Activation
+import nnet.functions.Activation
 
 import scala.util.Random
 
@@ -34,7 +34,7 @@ class Neuron(activation: Activation, var b: Double, var w: Array[Double]) {
     * @return a list of deltas for every input = weight * delta * activation'(value)
     */
   def backward(delta: Double, alpha: Double): Array[Double] = {
-    assert(w.size == x.length, "Feed forward mus be ran first")
+    assert(w.size == x.length, "Feed forward must be executed first")
     val d = delta * activation.gradient(z)
     val v = w.map(_ * d)
     b = b - alpha * d
