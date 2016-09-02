@@ -3,7 +3,7 @@ package nnet
 import nnet.Network.Layer
 import nnet.functions.{Activation, Linear}
 
-class Network(val spec: NetworkSpec, layers: Array[Layer]) {
+class Network(val spec: NetworkSpec, val layers: Array[Layer]) {
 
   /**
     * @param input - features of the training/testing sample
@@ -23,10 +23,11 @@ class Network(val spec: NetworkSpec, layers: Array[Layer]) {
   def backPropagation(delta: Array[Double]): Unit = {
     assert(spec.learningRate.isDefined, "Learning rate is not defined")
     val alpha = spec.learningRate.get()
+    val lambda = spec.regularization
     layers.reverse.foldLeft(delta) {
       (delta, layer) =>
         assert(layer.length == delta.length)
-        (layer, delta).zipped.map(_.backward(_, alpha)).transpose.map(_.sum)
+        (layer, delta).zipped.map(_.backward(_, alpha, lambda)).transpose.map(_.sum)
     }
   }
 

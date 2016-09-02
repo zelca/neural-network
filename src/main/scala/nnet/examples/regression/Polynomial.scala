@@ -15,7 +15,7 @@ object Polynomial extends App {
   val actual = x1.map(x => x -> polynomial(x))
   val generated = x1.map(x => x -> (polynomial(x) + Random.nextGaussian()))
 
-  val network = Network(NetworkSpec(Left(List(1, 10, 1)), LR, linearOutput = true, lossFunction = LF))
+  val network = Network(NetworkSpec(List(1, 10, 1), LR, linearOutput = true, lossFunction = LF))
 
   val trainingData = generated.map(xy => (Array(xy._2), Array(xy._1)))
   val losses = for (epoch <- 1 to 500) yield {

@@ -28,9 +28,12 @@ package object nnet {
   def evaluate(network: Network, data: Seq[Input]): Double = {
     assert(network.spec.lossFunction.isDefined, "Loss function is required for evaluation")
     val lossFunction = network.spec.lossFunction.get
-    data.map(i => (network.feedForward(i._2), i._1)).map(p => lossFunction(p._1, p._2)).sum / data.size
+    val loss = data.map(i => (network.feedForward(i._2), i._1)).map(p => lossFunction(p._1, p._2)).sum / data.size
+    loss + network.spec.regularization(network)
   }
 
   implicit def anyToOptionAny[A](a: A): Option[A] = Some(a)
+
+  implicit def anyToLeftAny[A, B](a: A): Either[A, B] = Left(a)
 
 }

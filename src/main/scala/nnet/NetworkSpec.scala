@@ -2,13 +2,14 @@ package nnet
 
 import nnet.NetworkSpec.{LayersSpec, LearningRateSpec, LossFunctionSpec}
 import nnet.functions.LearningRate.LearningRate
-import nnet.functions._
+import nnet.functions.{Regularization, _}
 
 class NetworkSpec(val layers: LayersSpec,
                   val activation: Activation,
                   val linearOutput: Boolean,
                   val lossFunction: LossFunctionSpec,
-                  val learningRate: LearningRateSpec) {
+                  val learningRate: LearningRateSpec,
+                  val regularization: Regularization) {
 
   assert(activation != Linear || !linearOutput,
     "Activation function is already linear")
@@ -37,19 +38,20 @@ object NetworkSpec {
   type LayersSpec = Either[List[Int], List[List[(Double, Array[Double])]]]
 
   def linear(layers: LayersSpec, learningRate: LearningRate): NetworkSpec = {
-    new NetworkSpec(layers, Linear, false, Some(Quadratic), Some(learningRate))
+    new NetworkSpec(layers, Linear, false, Some(Quadratic), Some(learningRate), NoRegularization)
   }
 
   def perceptron(layers: List[List[(Double, Array[Double])]]): NetworkSpec = {
-    new NetworkSpec(Right(layers), UnitStep, false, None, None)
+    new NetworkSpec(Right(layers), UnitStep, false, None, None, NoRegularization)
   }
 
   def apply(layers: LayersSpec,
             learningRate: LearningRateSpec,
             activation: Activation = Sigmoid,
             linearOutput: Boolean = false,
-            lossFunction: LossFunctionSpec = Some(Entropy)): NetworkSpec = {
-    new NetworkSpec(layers, activation, linearOutput, lossFunction, learningRate)
+            lossFunction: LossFunctionSpec = Some(Entropy),
+            regularization: Regularization = NoRegularization): NetworkSpec = {
+    new NetworkSpec(layers, activation, linearOutput, lossFunction, learningRate, regularization)
   }
 
 }

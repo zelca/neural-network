@@ -1,6 +1,6 @@
 package nnet
 
-import nnet.functions.Activation
+import nnet.functions.{Activation, Regularization}
 
 import scala.util.Random
 
@@ -29,16 +29,17 @@ class Neuron(activation: Activation, var b: Double, var w: Array[Double]) {
     * bias = bias - alpha * delta * activation'(z)
     * weight[i] = weight[i] - alpha * delta * activation'(z) * activation(value)
     *
-    * @param delta - delta, calculated based on subsequent layer
-    * @param alpha - learning rate
+    * @param delta  - delta, calculated based on subsequent layer
+    * @param alpha  - learning rate
+    * @param lamdba - regularization
     * @return a list of deltas for every input = weight * delta * activation'(value)
     */
-  def backward(delta: Double, alpha: Double): Array[Double] = {
+  def backward(delta: Double, alpha: Double, lamdba: Regularization): Array[Double] = {
     assert(w.size == x.length, "Feed forward must be executed first")
     val d = delta * activation.gradient(z)
     val v = w.map(_ * d)
     b = b - alpha * d
-    w = (w, x).zipped.map(_ - alpha * d * _)
+    w = (w, x).zipped.map((w, x) => w - alpha * (d * x + lamdba.gradient(w)))
     v
   }
 
