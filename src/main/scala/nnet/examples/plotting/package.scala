@@ -22,6 +22,12 @@ package object plotting extends Charting {
     chart.show()
   }
 
-  case class Series(title: String, xy: Seq[(Double, Double)], dots: Boolean = false)
+  case class Series(title: String, xy: Seq[(Double, Double)], dots: Boolean)
+
+  def dots[T](title: String, xy: Seq[(T, Double)])(implicit n: Numeric[T]): Series =
+    Series(title, xy.map(x => (n.toDouble(x._1), x._2)), dots = true)
+
+  def line[T](title: String, xy: Seq[(T, Double)])(implicit n: Numeric[T]): Series =
+    Series(title, xy.map(x => (n.toDouble(x._1), x._2)), dots = false)
 
 }

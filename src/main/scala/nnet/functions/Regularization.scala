@@ -23,7 +23,7 @@ object NoRegularization extends Regularization {
   * Adds rate * sum(|weight|) to loss function
   * and -1 * rate * sign(weight) during weight update
   */
-class L1(rate: Double) extends Regularization {
+case class L1(rate: Double) extends Regularization {
 
   override def apply(n: Network): Double = {
     rate * n.layers.flatMap(_.flatMap(_.w)).map(math.abs).sum
@@ -39,7 +39,7 @@ class L1(rate: Double) extends Regularization {
   * Adds 0.5 * rate * sum(weight * weight) to loss function
   * and rate * weight during weight update
   */
-class L2(rate: Double) extends Regularization {
+case class L2(rate: Double) extends Regularization {
 
   override def apply(n: Network): Double = {
     0.5 * rate * n.layers.flatMap(_.flatMap(_.w)).map(math.pow(_, 2)).sum
