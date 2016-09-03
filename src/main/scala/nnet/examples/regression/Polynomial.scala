@@ -1,18 +1,24 @@
 package nnet.examples.regression
 
+import com.typesafe.scalalogging.Logger
+import nnet.Network._
+import nnet.NetworkSpec._
 import nnet.examples.plotting._
 import nnet.functions._
-import nnet.{Network, NetworkSpec, _}
+import nnet.{Network, NetworkSpec}
+import org.slf4j.LoggerFactory
 
 import scala.util.Random
 
 object Polynomial extends App {
 
-  val Epochs = 500
-  val PointsCount = 100
+  val logger = Logger(LoggerFactory.getLogger("polynomial"))
+
+  val Epochs = 10000
+  val PointsCount = 50
 
   val LF = Quadratic
-  val LR = LearningRate.constant(0.01)
+  val LR = LearningRate.constant(0.1)
 
   val x1 = Array.fill(PointsCount)(-2.8 + 5.6 * Random.nextDouble())
   val generated = x1.map(x => x -> (polynomial(x) + Random.nextGaussian()))
@@ -35,8 +41,8 @@ object Polynomial extends App {
 
   def train(network: Network, data: Seq[Input]): Unit = {
     val losses = for (epoch <- 1 to Epochs) yield {
-      SGD(network, PointsCount, data)
-      val loss = evaluate(network, data)
+      network.SGD(Random.shuffle(data).take(PointsCount))
+      val loss = network.evaluate(data)
       logger.info(f"[$epoch]: loss: $loss%f")
       epoch -> loss
     }

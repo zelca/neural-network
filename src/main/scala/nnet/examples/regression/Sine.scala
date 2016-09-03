@@ -1,12 +1,18 @@
 package nnet.examples.regression
 
+import com.typesafe.scalalogging.Logger
+import nnet.Network.Input
+import nnet.NetworkSpec._
 import nnet.examples.plotting._
 import nnet.functions._
-import nnet.{Network, NetworkSpec, _}
+import nnet.{Network, NetworkSpec}
+import org.slf4j.LoggerFactory
 
 import scala.util.Random
 
 object Sine extends App {
+
+  val logger = Logger(LoggerFactory.getLogger("sine"))
 
   val Epochs = 200
   val PointsCount = 100
@@ -36,8 +42,8 @@ object Sine extends App {
 
   def train(network: Network, data: Seq[Input]): Unit = {
     val losses = for (epoch <- 1 to Epochs) yield {
-      SGD(network, PointsCount, data)
-      val loss = evaluate(network, data)
+      network.SGD(Random.shuffle(data).take(PointsCount))
+      val loss = network.evaluate(data)
       logger.info(f"[$epoch]: loss: $loss%f")
       epoch -> loss
     }

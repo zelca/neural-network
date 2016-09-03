@@ -37,19 +37,23 @@ object NetworkSpec {
 
   type LayersSpec = Either[List[Int], List[List[(Double, Array[Double])]]]
 
-  def linear(layers: LayersSpec, learningRate: LearningRate): NetworkSpec = {
-    new NetworkSpec(layers, Linear, false, Some(Quadratic), Some(learningRate), NoRegularization)
-  }
+  implicit def anyToOptionAny[A](a: A): Option[A] = Some(a)
+
+  implicit def anyToLeftAny[A, B](a: A): Either[A, B] = Left(a)
 
   def perceptron(layers: List[List[(Double, Array[Double])]]): NetworkSpec = {
     new NetworkSpec(Right(layers), UnitStep, false, None, None, NoRegularization)
+  }
+
+  def linear(layers: LayersSpec, learningRate: LearningRate): NetworkSpec = {
+    new NetworkSpec(layers, Linear, false, Quadratic, learningRate, NoRegularization)
   }
 
   def apply(layers: LayersSpec,
             learningRate: LearningRateSpec,
             activation: Activation = Sigmoid,
             linearOutput: Boolean = false,
-            lossFunction: LossFunctionSpec = Some(Entropy),
+            lossFunction: LossFunctionSpec = Entropy,
             regularization: Regularization = NoRegularization): NetworkSpec = {
     new NetworkSpec(layers, activation, linearOutput, lossFunction, learningRate, regularization)
   }

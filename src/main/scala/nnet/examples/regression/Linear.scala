@@ -1,14 +1,20 @@
 package nnet.examples.regression
 
+import com.typesafe.scalalogging.Logger
+import nnet.Network.Input
+import nnet.NetworkSpec._
 import nnet.examples.plotting._
 import nnet.functions._
-import nnet.{Network, NetworkSpec, _}
+import nnet.{Network, NetworkSpec}
+import org.slf4j.LoggerFactory
 
 import scala.util.Random
 
 object Linear extends App {
 
-  val Epochs = 10
+  val logger = Logger(LoggerFactory.getLogger("linear"))
+
+  val Epochs = 100
   val PointsCount = 10
 
   val LR = LearningRate.constant(0.003)
@@ -33,8 +39,8 @@ object Linear extends App {
 
   def train(network: Network, data: Seq[Input]): Unit = {
     val losses = for (epoch <- 1 to Epochs) yield {
-      SGD(network, PointsCount, data)
-      val loss = evaluate(network, data)
+      network.SGD(Random.shuffle(data).take(PointsCount))
+      val loss = network.evaluate(data)
       logger.info(f"[$epoch]: loss: $loss%f")
       epoch -> loss
     }

@@ -1,6 +1,6 @@
 package nnet.functions
 
-import nnet.Label
+import nnet.Network.Label
 
 trait LossFunction extends ((Label, Label) => Double) {
 
