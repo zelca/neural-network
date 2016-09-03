@@ -1,9 +1,8 @@
 package nnet.examples.regression
 
 import com.typesafe.scalalogging.Logger
-import nnet.Network._
 import nnet.NetworkSpec._
-import nnet.examples.plotting._
+import nnet.examples.utils._
 import nnet.functions._
 import nnet.{Network, NetworkSpec}
 import org.slf4j.LoggerFactory
@@ -12,42 +11,34 @@ import scala.util.Random
 
 object Polynomial extends App {
 
-  val logger = Logger(LoggerFactory.getLogger("polynomial"))
-
-  val Epochs = 10000
-  val PointsCount = 50
+  val Epochs = 500
+  val PointsCount = 100
 
   val LF = Quadratic
-  val LR = LearningRate.constant(0.1)
+  val LR = LearningRate.constant(0.01)
 
   val x1 = Array.fill(PointsCount)(-2.8 + 5.6 * Random.nextDouble())
-  val generated = x1.map(x => x -> (polynomial(x) + Random.nextGaussian()))
+  val generated = x1.map(x => x -> polynomialWithNoise(x))
   val trainingData = generated.map(xy => (Array(xy._2), Array(xy._1)))
 
-  val network = Network(NetworkSpec(List(1, 10, 1), LR, linearOutput = true, lossFunction = LF))
-  train(network, trainingData)
+  val x2 = Array.fill(PointsCount)(-2.8 + 5.6 * Random.nextDouble())
+  val testingData = x2.map(x => (Array(polynomialWithNoise(x)), Array(x)))
 
-  val x2 = -2.8 until 2.8 by 0.05
-  val actual = x2.map(x => x -> polynomial(x))
-  val predicted = x2.map(x => x -> network.feedForward(Array(x)).head)
+  val network = Network(NetworkSpec(List(1, 10, 1), LR, linearOutput = true, lossFunction = LF))
+  train(network, Epochs, trainingData, testingData)
+
+  val x3 = -2.8 until 2.8 by 0.05
+  val actual = x3.map(x => x -> polynomial(x))
+  val predicted = x3.map(x => x -> network.feedForward(Array(x)).head)
 
   plot("Polynomial",
     dots("generated", generated),
     line("actual", actual),
     line("predicted", predicted))
 
-  def polynomial(x: Double): Double =
-    math.pow(x, 5) - 8 * math.pow(x, 3) + 10 * x + 6
+  def polynomial(x: Double): Double = math.pow(x, 5) - 8 * math.pow(x, 3) + 10 * x + 6
 
-  def train(network: Network, data: Seq[Input]): Unit = {
-    val losses = for (epoch <- 1 to Epochs) yield {
-      network.SGD(Random.shuffle(data).take(PointsCount))
-      val loss = network.evaluate(data)
-      logger.info(f"[$epoch]: loss: $loss%f")
-      epoch -> loss
-    }
-    plot("Polynomial", line("loss", losses))
-  }
+  def polynomialWithNoise(x: Double): Double = polynomial(x) + Random.nextGaussian()
 
 }
 

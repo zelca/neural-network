@@ -1,9 +1,8 @@
 package nnet.examples.regression
 
 import com.typesafe.scalalogging.Logger
-import nnet.Network.Input
 import nnet.NetworkSpec._
-import nnet.examples.plotting._
+import nnet.examples.utils._
 import nnet.functions._
 import nnet.{Network, NetworkSpec}
 import org.slf4j.LoggerFactory
@@ -12,9 +11,7 @@ import scala.util.Random
 
 object Sine extends App {
 
-  val logger = Logger(LoggerFactory.getLogger("sine"))
-
-  val Epochs = 200
+  val Epochs = 300
   val PointsCount = 100
 
   val LF = Quadratic
@@ -24,31 +21,24 @@ object Sine extends App {
   val generated = x1.map(x => x -> (math.sin(x) + 0.2 * Random.nextGaussian()))
   val trainingData = generated.map(xy => (Array(xy._2), Array(xy._1)))
 
+  val x2 = Array.fill(PointsCount)(10 * Random.nextDouble())
+  val testingData = x2.map(x => (Array(math.sin(x) + 0.2 * Random.nextGaussian()), Array(x)))
+
   val network = Network(NetworkSpec(List(1, 6, 1), LR, Sigmoid, linearOutput = true, LF))
-  train(network, trainingData)
+  train(network, Epochs, trainingData, testingData)
 
   val net = hardcodedNetwork()
 
-  val x2 = 0.0 until 10.0 by 0.1
-  val actual = x2.map(x => x -> math.sin(x))
-  val hardcoded = x2.map(x => x -> net.feedForward(Array(x)).head)
-  val predicted = x2.map(x => x -> network.feedForward(Array(x)).head)
+  val x3 = 0.0 until 10.0 by 0.1
+  val actual = x3.map(x => x -> math.sin(x))
+  val hardcoded = x3.map(x => x -> net.feedForward(Array(x)).head)
+  val predicted = x3.map(x => x -> network.feedForward(Array(x)).head)
 
   plot("Sine",
     dots("generated", generated),
     line("actual", actual),
     line("hardcoded", hardcoded),
     line("predicted", predicted))
-
-  def train(network: Network, data: Seq[Input]): Unit = {
-    val losses = for (epoch <- 1 to Epochs) yield {
-      network.SGD(Random.shuffle(data).take(PointsCount))
-      val loss = network.evaluate(data)
-      logger.info(f"[$epoch]: loss: $loss%f")
-      epoch -> loss
-    }
-    plot("Sine", line("loss", losses))
-  }
 
   def hardcodedNetwork(): Network = {
     val layers = List(
@@ -61,7 +51,6 @@ object Sine extends App {
         (9.78, Array(-3.14))),
       List((-2.59, Array(-1.39, 3.85, -3.59, 2.92, 2.94, 1.70)))
     )
-
     Network(NetworkSpec(Right(layers), None, Sigmoid, linearOutput = true, None))
   }
 

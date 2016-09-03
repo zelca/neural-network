@@ -2,11 +2,17 @@ package nnet.examples
 
 import java.awt.{Color, Font}
 
+import com.typesafe.scalalogging.Logger
+import nnet.Network
+import nnet.Network._
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer
+import org.slf4j.LoggerFactory
 
-import scalax.chart.module.Charting
+import scalax.chart.module.ChartFactories.XYLineChart
 
-package object plotting extends Charting {
+package object utils {
+
+  val logger = Logger(LoggerFactory.getLogger("utils"))
 
   def plot(title: String, series: Series*): Unit = {
     val data = series.map(s => s.title -> s.xy)
@@ -29,5 +35,18 @@ package object plotting extends Charting {
 
   def line[T](title: String, xy: Seq[(T, Double)])(implicit n: Numeric[T]): Series =
     Series(title, xy.map(x => (n.toDouble(x._1), x._2)), dots = false)
+
+  def train(network: Network, epochs: Int, trainingData: Seq[Input], testingData: Seq[Input]): Unit = {
+    val errors = for (epoch <- 1 to epochs) yield {
+      network.SGD(trainingData)
+      val testing = network.evaluate(testingData)
+      val training = network.evaluate(trainingData)
+      logger.info(f"[$epoch]: error: $testing%f")
+      epoch -> (testing, training)
+    }
+    val testingLine = line("testing error", errors.map(i => i._1 -> i._2._1))
+    val trainingLine = line("training error", errors.map(i => i._1 -> i._2._2))
+    plot("Errors", testingLine, trainingLine)
+  }
 
 }

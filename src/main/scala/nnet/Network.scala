@@ -36,7 +36,7 @@ class Network(val spec: NetworkSpec, val layers: Array[Layer]) {
   }
 
   /**
-    * Predicts for the gicen points and calculates total loss
+    * Predicts for the given points and calculates total loss
     *
     * @param data - dataset to predict on
     * @return total loss for  the given dataset
@@ -45,10 +45,10 @@ class Network(val spec: NetworkSpec, val layers: Array[Layer]) {
   def evaluate(data: Seq[Input]): Double = {
     assert(spec.lossFunction.isDefined, "Loss function is required for evaluation")
     val lossFunction = spec.lossFunction.get
-    val losses = data.map {
+    val errors = data.map {
       case (label, features) => lossFunction(feedForward(features), label)
     }
-    losses.sum / data.size + spec.regularization(this)
+    errors.sum / data.size + spec.regularization(this)
   }
 
   /**
