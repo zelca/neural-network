@@ -52,7 +52,7 @@ class Network(val spec: NetworkSpec, val layers: Array[Layer]) {
   }
 
   /**
-    * Trains network uses stochastic gradient descent and the given points
+    * Trains network using online stochastic gradient descent algorithm
     *
     * @param data - training dataset
     */

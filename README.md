@@ -16,12 +16,12 @@ The network and neurons are implemented in pretty straightforward (and non-optim
 - The [Back-propagation](https://en.wikipedia.org/wiki/Backpropagation) algorithm to train network
 - [Stochastic gradient descent](https://en.wikipedia.org/wiki/Stochastic_gradient_descent) algorithm
 - Multiple loss (cost) functions, like [Quadratic](https://en.wikipedia.org/wiki/Loss_function#Quadratic_loss_function) and [Cross Entropy](https://en.wikipedia.org/wiki/Cross_entropy)
-- Simple [Linear Regression](https://en.wikipedia.org/wiki/Linear_regression) example
+- Simple [Linear Regression](https://en.wikipedia.org/wiki/Linear_regression) examples
+- Add [regularization](https://www.quora.com/What-is-regularization-in-machine-learning)
 
 ### TODO
 
 This list is not final and will be extended.
 
 - Build and train a network on [MNIST](http://yann.lecun.com/exdb/mnist/) data
-- Add [regularization](https://www.quora.com/What-is-regularization-in-machine-learning)
 - Apply [dropouts](https://www.quora.com/How-does-the-dropout-method-work-in-deep-learning) on neurons

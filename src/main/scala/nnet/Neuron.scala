@@ -31,15 +31,15 @@ class Neuron(activation: Activation, var b: Double, var w: Array[Double]) {
     *
     * @param delta  - delta, calculated based on subsequent layer
     * @param alpha  - learning rate
-    * @param lamdba - regularization
+    * @param lambda - regularization
     * @return a list of deltas for every input = weight * delta * activation'(value)
     */
-  def backward(delta: Double, alpha: Double, lamdba: Regularization): Array[Double] = {
+  def backward(delta: Double, alpha: Double, lambda: Regularization): Array[Double] = {
     assert(w.size == x.length, "Feed forward must be executed first")
     val d = delta * activation.gradient(z)
     val v = w.map(_ * d)
     b = b - alpha * d
-    w = (w, x).zipped.map((w, x) => w - alpha * (d * x + lamdba.gradient(w)))
+    w = (w, x).zipped.map((w, x) => w - alpha * (d * x + lambda.gradient(w)))
     v
   }
 
@@ -58,7 +58,9 @@ object Neuron {
     * @return a neuron with the given activation function and random (Gaussian) bias and weights
     */
   def apply(activation: Activation, input: Int): Neuron = {
-    new Neuron(activation, Random.nextGaussian(), Array.fill(input)(Random.nextGaussian()))
+    new Neuron(activation, nextGaussian(input), Array.fill(input)(nextGaussian(input)))
   }
+
+  private def nextGaussian(size: Int): Double = Random.nextGaussian() / math.sqrt(size)
 
 }

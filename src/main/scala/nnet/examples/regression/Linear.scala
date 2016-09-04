@@ -19,10 +19,10 @@ object Linear extends App {
   val trainingData = generated.map(xy => (Array(xy._2), Array(xy._1)))
 
   val x2 = Array.fill(PointsCount)(10 * Random.nextDouble())
-  val testingData = x2.map(x => (Array(linearWithNoise(x)), Array(x)))
+  val validationData = x2.map(x => (Array(linearWithNoise(x)), Array(x)))
 
   val network = Network(NetworkSpec.linear(List(1, 1), LR))
-  train(network, Epochs, trainingData, testingData)
+  train(network, Epochs, trainingData, validationData)
 
   val x3 = 0.0 until 10.0 by 0.1
   val actual = x3.map(x => x -> linear(x))

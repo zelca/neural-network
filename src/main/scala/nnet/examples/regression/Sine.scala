@@ -22,10 +22,10 @@ object Sine extends App {
   val trainingData = generated.map(xy => (Array(xy._2), Array(xy._1)))
 
   val x2 = Array.fill(PointsCount)(10 * Random.nextDouble())
-  val testingData = x2.map(x => (Array(math.sin(x) + 0.2 * Random.nextGaussian()), Array(x)))
+  val validationData = x2.map(x => (Array(math.sin(x) + 0.2 * Random.nextGaussian()), Array(x)))
 
   val network = Network(NetworkSpec(List(1, 6, 1), LR, Sigmoid, linearOutput = true, LF))
-  train(network, Epochs, trainingData, testingData)
+  train(network, Epochs, trainingData, validationData)
 
   val net = hardcodedNetwork()
 

@@ -22,10 +22,10 @@ object Polynomial extends App {
   val trainingData = generated.map(xy => (Array(xy._2), Array(xy._1)))
 
   val x2 = Array.fill(PointsCount)(-2.8 + 5.6 * Random.nextDouble())
-  val testingData = x2.map(x => (Array(polynomialWithNoise(x)), Array(x)))
+  val validationData = x2.map(x => (Array(polynomialWithNoise(x)), Array(x)))
 
   val network = Network(NetworkSpec(List(1, 10, 1), LR, linearOutput = true, lossFunction = LF))
-  train(network, Epochs, trainingData, testingData)
+  train(network, Epochs, trainingData, validationData)
 
   val x3 = -2.8 until 2.8 by 0.05
   val actual = x3.map(x => x -> polynomial(x))
