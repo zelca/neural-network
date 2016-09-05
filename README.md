@@ -19,9 +19,4 @@ The network and neurons are implemented in pretty straightforward (and non-optim
 - Simple [Linear Regression](https://en.wikipedia.org/wiki/Linear_regression) examples
 - Add [regularization](https://www.quora.com/What-is-regularization-in-machine-learning)
 - Apply [dropouts](https://www.quora.com/How-does-the-dropout-method-work-in-deep-learning)
-
-### TODO
-
-This list is not final and will be extended.
-
 - Build and train a network on [MNIST](http://yann.lecun.com/exdb/mnist/) data
