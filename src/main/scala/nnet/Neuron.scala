@@ -10,7 +10,7 @@ class Neuron(activation: Activation, var b: Double, var w: Array[Double]) {
 
   var z = 0.0 // last weighted value
 
-  var a = 0.0 // last activation value
+  var dc = 1.0 // dropout coefficient
 
   /**
     * @param input - output of the preceding layer
@@ -18,10 +18,13 @@ class Neuron(activation: Activation, var b: Double, var w: Array[Double]) {
     */
   def forward(input: Array[Double]): Double = {
     assert(w.size == input.length, "Weights count must be equal to inputs count")
-    x = input
-    z = (w, x).zipped.map(_ * _).sum + b
-    a = activation(z)
-    a
+    if (dc == 0.0)
+      dc
+    else {
+      x = input
+      z = (w, x).zipped.map(_ * _).sum + b
+      dc * activation(z)
+    }
   }
 
   /**
@@ -35,12 +38,16 @@ class Neuron(activation: Activation, var b: Double, var w: Array[Double]) {
     * @return a list of deltas for every input = weight * delta * activation'(value)
     */
   def backward(delta: Double, alpha: Double, lambda: Regularization): Array[Double] = {
-    assert(w.size == x.length, "Feed forward must be executed first")
-    val d = delta * activation.gradient(z)
-    val v = w.map(_ * d)
-    b = b - alpha * d
-    w = (w, x).zipped.map((w, x) => w - alpha * (d * x + lambda.gradient(w)))
-    v
+    if (dc == 0.0)
+      w.map(dc * _)
+    else {
+      assert(w.size == x.length, "Feed forward must be executed first")
+      val d = dc * delta * activation.gradient(z)
+      val deltas = w.map(_ * d)
+      b = b - alpha * d
+      w = (w, x).zipped.map((w, x) => w - alpha * (d * x + lambda.gradient(w)))
+      deltas
+    }
   }
 
 }

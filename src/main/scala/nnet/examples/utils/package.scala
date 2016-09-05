@@ -36,17 +36,17 @@ package object utils {
   def line[T](title: String, xy: Seq[(T, Double)])(implicit n: Numeric[T]): Series =
     Series(title, xy.map(x => (n.toDouble(x._1), x._2)), dots = false)
 
-  def train(network: Network, epochs: Int, trainingData: Seq[Input], validationData: Seq[Input]): Unit = {
+  def train(network: Network, epochs: Int, trainingData: Seq[Input], testingData: Seq[Input]): Unit = {
     val errors = for (epoch <- 1 to epochs) yield {
       network.SGD(trainingData)
+      val testing = network.evaluate(testingData)
       val training = network.evaluate(trainingData)
-      val validation = network.evaluate(validationData)
-      logger.info(f"[$epoch]: error: $validation%f")
-      epoch -> (training, validation)
+      logger.info(f"[$epoch]: error: $testing%f")
+      epoch -> (training, testing)
     }
+    val testingLine = line("testing error", errors.map(i => i._1 -> i._2._2))
     val trainingLine = line("training error", errors.map(i => i._1 -> i._2._1))
-    val validationLine = line("validation error", errors.map(i => i._1 -> i._2._2))
-    plot("Errors", trainingLine, validationLine)
+    plot("Errors", trainingLine, testingLine)
   }
 
 }

@@ -5,6 +5,8 @@ import nnet.Network.{Input, Layer}
 import nnet.functions.{Activation, Linear}
 import org.slf4j.LoggerFactory
 
+import scala.util.Random
+
 class Network(val spec: NetworkSpec, val layers: Array[Layer]) {
 
   private val logger = Logger(LoggerFactory.getLogger("network"))
@@ -60,10 +62,32 @@ class Network(val spec: NetworkSpec, val layers: Array[Layer]) {
     assert(spec.lossFunction.isDefined, "Loss function is required for SGD")
     val lossFunction = spec.lossFunction.get
     for (i <- data.indices; (label, features) = data(i)) {
+      initDropouts()
       val predicted = feedForward(features)
       backPropagation(lossFunction.delta(predicted, label))
+      resetDropouts()
       if (i % 1000 == 0) logger.debug("%s of %s processed".format(i + 1, data.size))
     }
+  }
+
+  /**
+    * If dropout probability > 0 sets (inverted) dropouts
+    */
+  def initDropouts(): Unit = {
+    if (spec.dropoutProbability == 0.0) return
+    val dp = spec.dropoutProbability
+    val dc = 1 / (1 - dp)
+    layers.init.foreach(_.foreach {
+      n => if (Random.nextDouble() <= dp) n.dc = 0.0 else n.dc = dc
+    })
+  }
+
+  /**
+    * Reset dropout coefficient for all neurons to 1.0 (no dropouts)
+    */
+  def resetDropouts(): Unit = {
+    if (spec.dropoutProbability == 0.0) return
+    layers.init.foreach(_.foreach(_.dc = 1.0))
   }
 
 }

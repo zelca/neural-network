@@ -1,11 +1,9 @@
 package nnet.examples.regression
 
-import com.typesafe.scalalogging.Logger
 import nnet.NetworkSpec._
 import nnet.examples.utils._
 import nnet.functions._
 import nnet.{Network, NetworkSpec}
-import org.slf4j.LoggerFactory
 
 import scala.util.Random
 
@@ -22,10 +20,10 @@ object Sine extends App {
   val trainingData = generated.map(xy => (Array(xy._2), Array(xy._1)))
 
   val x2 = Array.fill(PointsCount)(10 * Random.nextDouble())
-  val validationData = x2.map(x => (Array(math.sin(x) + 0.2 * Random.nextGaussian()), Array(x)))
+  val testingData = x2.map(x => (Array(math.sin(x) + 0.2 * Random.nextGaussian()), Array(x)))
 
   val network = Network(NetworkSpec(List(1, 6, 1), LR, Sigmoid, linearOutput = true, LF))
-  train(network, Epochs, trainingData, validationData)
+  train(network, Epochs, trainingData, testingData)
 
   val net = hardcodedNetwork()
 

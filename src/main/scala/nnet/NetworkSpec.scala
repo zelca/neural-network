@@ -9,13 +9,17 @@ class NetworkSpec(val layers: LayersSpec,
                   val linearOutput: Boolean,
                   val lossFunction: LossFunctionSpec,
                   val learningRate: LearningRateSpec,
-                  val regularization: Regularization) {
+                  val regularization: Regularization,
+                  val dropoutProbability: Double) {
 
   assert(activation != Linear || !linearOutput,
     "Activation function is already linear")
 
   assert(activation != UnitStep || learningRate.isEmpty,
     "Unit step function can not be used for learning")
+
+  assert(dropoutProbability >= 0.0 && dropoutProbability < 1.0,
+    "Dropout probability has to be between 0.0 and 1.0 (exclusive)")
 
   assert(!(lossFunction.contains(Entropy) && (activation != Sigmoid || linearOutput)),
     "Cross entropy is only used with Sigmoid activation for all layers")
@@ -42,11 +46,11 @@ object NetworkSpec {
   implicit def anyToLeftAny[A, B](a: A): Either[A, B] = Left(a)
 
   def perceptron(layers: List[List[(Double, Array[Double])]]): NetworkSpec = {
-    new NetworkSpec(Right(layers), UnitStep, false, None, None, NoRegularization)
+    new NetworkSpec(Right(layers), UnitStep, false, None, None, NoRegularization, 0.0)
   }
 
   def linear(layers: LayersSpec, learningRate: LearningRate): NetworkSpec = {
-    new NetworkSpec(layers, Linear, false, Quadratic, learningRate, NoRegularization)
+    new NetworkSpec(layers, Linear, false, Quadratic, learningRate, NoRegularization, 0.0)
   }
 
   def apply(layers: LayersSpec,
@@ -54,8 +58,9 @@ object NetworkSpec {
             activation: Activation = Sigmoid,
             linearOutput: Boolean = false,
             lossFunction: LossFunctionSpec = Entropy,
-            regularization: Regularization = NoRegularization): NetworkSpec = {
-    new NetworkSpec(layers, activation, linearOutput, lossFunction, learningRate, regularization)
+            regularization: Regularization = NoRegularization,
+            dropoutProbability: Double = 0.0): NetworkSpec = {
+    new NetworkSpec(layers, activation, linearOutput, lossFunction, learningRate, regularization, dropoutProbability)
   }
 
 }
